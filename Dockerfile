@@ -1,9 +1,9 @@
-FROM rust:1.63-alpine as builder
+FROM rust:1.74-alpine as builder
 WORKDIR /usr/src/shadow-tls
 RUN apk add --no-cache musl-dev libressl-dev
 
 COPY . .
-RUN RUSTFLAGS="" cargo build --bin shadow-tls --release
+RUN CARGO_REGISTRIES_CRATES_IO_PROTOCOL=sparse RUSTFLAGS="" cargo build --bin shadow-tls --release
 
 FROM alpine:latest
 
@@ -12,6 +12,12 @@ ENV LISTEN=""
 ENV SERVER=""
 ENV TLS=""
 ENV THREADS=""
+ENV PASSWORD=""
+ENV ALPN=""
+ENV DISABLE_NODELAY=""
+ENV FASTOPEN=""
+ENV V3=""
+ENV STRICT=""
 
 COPY ./entrypoint.sh /
 RUN chmod +x /entrypoint.sh && apk add --no-cache ca-certificates
